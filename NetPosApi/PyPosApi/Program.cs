@@ -6,7 +6,6 @@ using PyPosApi.modules.moduleRegisterEmploye.model;
 using PyPosApi.common.security;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using PyPosApi.modules.moduleArticles.model;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,8 +28,10 @@ builder.Services.AddCors( options => {
 
 //database configuration
 builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PyPosDatabase"))
+    options.UseMySql(builder.Configuration.GetConnectionString("PyPosDatabase"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("PyPosDatabase")))
 );
+
+
 
 //add scopes
 builder.Services.AddScoped<LoginRepository>();
