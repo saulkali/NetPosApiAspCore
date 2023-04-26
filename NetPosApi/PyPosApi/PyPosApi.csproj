@@ -24,12 +24,14 @@
 
   <ItemGroup>
     <Folder Include="common\constants\" />
-    <Folder Include="modules\moduleLogin\view\" />
-    <Folder Include="modules\moduleEmployes\view\" />
     <Folder Include="modules\moduleArticles\" />
     <Folder Include="modules\moduleArticles\controller\" />
     <Folder Include="modules\moduleArticles\model\" />
     <Folder Include="modules\moduleArticles\enum\" />
+    <Folder Include="modules\moduleClient\" />
+    <Folder Include="modules\moduleClient\model\" />
+    <Folder Include="modules\moduleClient\controller\" />
+    <Folder Include="common\database\functions\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,5 +42,9 @@
     <None Remove="modules\moduleArticles\model\" />
     <None Remove="modules\moduleArticles\enum\" />
     <None Remove="Pomelo.EntityFrameworkCore.MySql" />
+    <None Remove="modules\moduleClient\" />
+    <None Remove="modules\moduleClient\model\" />
+    <None Remove="modules\moduleClient\controller\" />
+    <None Remove="common\database\functions\" />
   </ItemGroup>
 </Project>

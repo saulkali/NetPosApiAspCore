@@ -2,7 +2,6 @@ using PyPosApi.common.database.context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using PyPosApi.modules.moduleLogin.model;
-using PyPosApi.modules.moduleRegisterEmploye.model;
 using PyPosApi.common.security;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -35,7 +34,6 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 //add scopes
 builder.Services.AddScoped<LoginRepository>();
-builder.Services.AddScoped<RegisterEmployeRepository>();
 builder.Services.AddScoped<ArticlesRepository>();
 
 builder.Services.AddScoped<DatabaseContext>();

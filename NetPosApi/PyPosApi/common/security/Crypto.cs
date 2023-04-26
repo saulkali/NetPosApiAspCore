@@ -4,6 +4,8 @@ namespace PyPosApi.common.security
 {
     public static class Crypto
     {
+
+
         public static string HashPassword(string password)
         {
             string hashpassword = string.Empty;
