@@ -39,6 +39,7 @@ namespace PyPosApi.common.database.functions
 			}
 			return isDeleted;
 		}
+
         /// <summary>
         /// valida la autenticacion del usuario
         /// </summary>

@@ -5,6 +5,7 @@ namespace PyPosApi.modules.moduleClient.model
 	{
 		public ClientRepository()
 		{
+
 		}
 	}
 }

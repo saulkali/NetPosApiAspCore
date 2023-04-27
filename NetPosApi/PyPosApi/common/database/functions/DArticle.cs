@@ -28,6 +28,7 @@ namespace PyPosApi.common.database.functions
 			{
 
 			}
+
 			return isDeleted;
 		}
 

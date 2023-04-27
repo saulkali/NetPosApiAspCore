@@ -42,6 +42,26 @@ namespace PyPosApi.common.database.functions
 
 			return isCreated;
 		}
+
+		public async Task<bool> Delete(Guid idClient)
+		{
+			bool isDeleted = false;
+			try
+			{
+				ClientsScheme? client = _databaseContext.Clients.Where(cli => cli.Id == idClient).FirstOrDefault();
+				if (client == null)
+					throw new Exception($"client not exists {idClient}");
+
+				_databaseContext.Clients.Remove(client);
+				await _databaseContext.SaveChangesAsync();
+			}
+			catch (Exception ex)
+			{
+
+			}
+
+			return isDeleted;
+		}
 	}
 }
 
