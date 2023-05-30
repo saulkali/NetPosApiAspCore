@@ -32,7 +32,7 @@ namespace NetPosApiUniTest.common.security
 		}
 
         [Test]
-        public void VerifyPasswordHashTest_IsNotCorrect()
+        public void VerifyPasswordHashTest_IsInCorrect()
         {
             string password = "helloworld";
             string hashPassword = "936a185c81e9e05cb78cd732b0b3280eb9444";

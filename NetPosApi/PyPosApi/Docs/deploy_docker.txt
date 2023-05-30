@@ -1,0 +1,3 @@
+======================================= NOTA =====================================================
+
+1. el archivo docker local (Dockerfile) subelo hasta el nivel de la solucion (sln) o te arrojara un error de (CS static Main) al crear el docker build

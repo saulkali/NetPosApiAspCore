@@ -15,6 +15,7 @@ namespace PyPosApi.modules.moduleLogin.controller
             _loginRepository = loginRepository;
         }
 
+
         [HttpPost("auth")]
         public async Task<ActionResult> Post([FromBody] LoginEntity loginEntity)
         {

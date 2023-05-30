@@ -6,76 +6,100 @@ using PyPosApi.common.security;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using PyPosApi.modules.moduleArticles.model;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+using PyPosApi.common.database.functions;
 
 
-//cors
-builder.Services.AddCors( options => {
-    options.AddDefaultPolicy(builder =>{
-        builder.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
-    });
-});
-
-
-//database configuration
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("PyPosDatabase"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("PyPosDatabase")))
-);
-
-
-
-//add scopes
-builder.Services.AddScoped<LoginRepository>();
-builder.Services.AddScoped<ArticlesRepository>();
-
-builder.Services.AddScoped<DatabaseContext>();
-
-
-//jwt configuration
-string secretKey = builder.Configuration.GetValue<string>("JwtSecret");
-
-builder.Services.AddScoped(provider => {
-    return new JwtSecurity(secretKey);
-});
-
-
-builder.Services.AddSingleton(new JwtSecurity(secretKey));
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-});
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace PyPosApi
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class Program
+    {
+        [STAThread]
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+
+            //cors
+            builder.Services.AddCors(options => {
+                options.AddDefaultPolicy(builder => {
+                    builder.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
+                });
+            });
+
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(5242); // HTTP
+                options.ListenAnyIP(7242, listenOptions =>
+                {
+                    listenOptions.UseHttps(); // HTTPS
+                });
+            });
+
+            //database configuration
+            builder.Services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("PyPosDatabase")));
+
+            //add scopes
+            builder.Services.AddScoped<LoginRepository>();
+            builder.Services.AddScoped<ArticlesRepository>();
+            builder.Services.AddScoped<DatabaseContext>();
+            builder.Services.AddScoped<DArticle>();
+            builder.Services.AddScoped<DClient>();
+            builder.Services.AddScoped<DUser>();
+
+            //jwt configuration
+            string secretKey = builder.Configuration.GetValue<string>("JwtSecret");
+
+            builder.Services.AddScoped(provider => {
+                return new JwtSecurity(secretKey);
+            });
+
+
+            builder.Services.AddSingleton(new JwtSecurity(secretKey));
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            var app = builder.Build();
+
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapControllers();
+
+            //cors
+            app.UseCors();
+
+            app.Run();
+        }
+
+
+    }
+
+
+
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-//cors
-app.UseCors();
-
-app.Run();

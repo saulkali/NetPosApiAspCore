@@ -1,10 +1,6 @@
-﻿using System;
-using NUnit.Framework;
-using System.Net.Http;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Hosting;
-using PyPosApi;
+
 
 namespace NetPosApiUniTest.modules.moduleLogin.controller
 {

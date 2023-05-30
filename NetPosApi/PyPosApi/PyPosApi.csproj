@@ -19,7 +19,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="JWT" Version="10.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +31,7 @@
     <Folder Include="modules\moduleClient\model\" />
     <Folder Include="modules\moduleClient\controller\" />
     <Folder Include="common\database\functions\" />
+    <Folder Include="Docs\" />
   </ItemGroup>
 
   <ItemGroup>

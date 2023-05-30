@@ -16,8 +16,7 @@ namespace PyPosApi.common.database.context
         public DbSet<ClientsScheme> Clients { get; set; }
         public DbSet<ProvidersScheme> Providers { get; set; }
         public DbSet<TypeSalesScheme> TypeSales { get; set; }
-
-
+      
         public DatabaseContext(DbContextOptions<DatabaseContext> options): base(options)
         {
 

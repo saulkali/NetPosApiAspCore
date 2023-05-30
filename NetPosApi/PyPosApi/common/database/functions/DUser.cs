@@ -11,10 +11,11 @@ namespace PyPosApi.common.database.functions
 	public class DUser
 	{
 		private readonly DatabaseContext _databaseContext;
-
-		public DUser(DatabaseContext databaseContext)
+		private readonly JwtSecurity _jwtSecurity;
+		public DUser(DatabaseContext databaseContext, JwtSecurity jwtSecurity)
 		{
 			_databaseContext = databaseContext;
+			_jwtSecurity = jwtSecurity;
 		}
 
 		/// <summary>
