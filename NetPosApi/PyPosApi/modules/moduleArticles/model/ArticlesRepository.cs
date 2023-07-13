@@ -4,16 +4,19 @@ using PyPosApi.modules.moduleArticles.@enum;
 using PyPosApi.common.entities;
 using PyPosApi.common.database.schemes;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace PyPosApi.modules.moduleArticles.model
 {
 	public class ArticlesRepository
 	{
 		private readonly DatabaseContext _databaseContext;
+		private readonly ILogger<ArticlesRepository> _logger;
 
-		public ArticlesRepository(DatabaseContext databaseContext)
+		public ArticlesRepository(DatabaseContext databaseContext,ILogger<ArticlesRepository> logger)
 		{
 			_databaseContext = databaseContext;
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -22,22 +25,25 @@ namespace PyPosApi.modules.moduleArticles.model
 		/// <param name="CodeBar"></param>
 		/// <param name="Amount"></param>
 		/// <returns></returns>
-		public async Task<(ArticleEntity?,ArticlesResponseEnum)> GetArticleByCodeBar(string CodeBar,float Amount)
+		public async Task<ResponseEntity> GetArticleByCodeBar(string CodeBar,float Amount)
 		{
+			ResponseEntity responseEntity = new ResponseEntity();
+
 			ArticleEntity? articleEntity = null;
-			ArticlesResponseEnum response = ArticlesResponseEnum.Unknow;
+			responseEntity.Status = (int)ArticlesResponseEnum.Unknow;
+
 			try
 			{
 				ArticleScheme? article = await _databaseContext.Articles.Where(
 					art => art.CodeBar == CodeBar && art.Status == true
 				).FirstOrDefaultAsync();
 				if (article == null)
-					response = ArticlesResponseEnum.NoExists;
+                    responseEntity.Status = (int)ArticlesResponseEnum.NoExists;
 				else if (article.Amount > Amount)
-					response = ArticlesResponseEnum.AmountInsufficient;
+                    responseEntity.Status = (int)ArticlesResponseEnum.AmountInsufficient;
 				else
 				{
-					response = ArticlesResponseEnum.Success;
+                    responseEntity.Status = (int)ArticlesResponseEnum.Success;
 					articleEntity = new ArticleEntity()
 					{
 
@@ -54,13 +60,17 @@ namespace PyPosApi.modules.moduleArticles.model
 						IdProvider  = article.IdProvider
 
 					};
+					responseEntity.Data = JsonConvert.SerializeObject(articleEntity);
 				}
 			}
 			catch (Exception ex)
 			{
 
+                _logger.LogError(ex, "Ocurred error");
+                responseEntity.Message += ex.Message;
 			}
-			return (articleEntity,response);
+
+			return responseEntity;
 		}
 
 		/// <summary>
@@ -68,14 +78,17 @@ namespace PyPosApi.modules.moduleArticles.model
 		/// </summary>
 		/// <param name="articleEntity"></param>
 		/// <returns></returns>
-		public async Task<ArticlesResponseEnum> Save(ArticleEntity articleEntity)
+		public async Task<ResponseEntity> Save(ArticleEntity articleEntity)
 		{
-			ArticlesResponseEnum response = ArticlesResponseEnum.Error;
+			ResponseEntity resposeEntity = new ResponseEntity();
+			resposeEntity.Message = "Error Unknow: ";
+			resposeEntity.Status = (int)ArticlesResponseEnum.Error;
+
 			try
 			{
 				bool exists = _databaseContext.Articles.Any(article => article.CodeBar == articleEntity.CodeBar);
 				if (exists)
-					response = ArticlesResponseEnum.Exists;
+                    resposeEntity.Status = (int)ArticlesResponseEnum.Exists;
 				else {
                     ArticleScheme articleScheme = new ArticleScheme()
                     {
@@ -92,15 +105,18 @@ namespace PyPosApi.modules.moduleArticles.model
                     };
                     await _databaseContext.AddAsync(articleScheme);
                     await _databaseContext.SaveChangesAsync();
-                    response = ArticlesResponseEnum.Success;
+                    resposeEntity.Status = (int)ArticlesResponseEnum.Success;
                 }
 				
             }
 			catch (Exception ex)
 			{
 
+                _logger.LogError(ex, "Ocurred error");
+                resposeEntity.Message += ex.Message;
 			}
-			return response;
+
+			return resposeEntity;
 		}
 	}
 }

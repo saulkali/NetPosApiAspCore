@@ -34,7 +34,6 @@
   <ItemGroup>
     <Folder Include="common\" />
     <Folder Include="common\security\" />
-    <Folder Include="modules\" />
     <Folder Include="modules\moduleLogin\" />
     <Folder Include="modules\moduleLogin\controller\" />
     <Folder Include="modules\moduleClient\" />

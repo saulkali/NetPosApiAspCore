@@ -13,6 +13,10 @@ COPY . .
 WORKDIR "/src/PyPosApi"
 RUN dotnet build "PyPosApi.csproj" -c Release -o /app/build
 
+# Agregar comando para generar certificado HTTPS
+RUN dotnet dev-certs https --trust
+
+
 FROM build AS publish
 RUN dotnet publish "PyPosApi.csproj" -c Release -o /app/publish
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Hosting;
-
+using System.Text;
+using Newtonsoft.Json;
 
 namespace NetPosApiUniTest.modules.moduleLogin.controller
 {
@@ -22,9 +23,23 @@ namespace NetPosApiUniTest.modules.moduleLogin.controller
 		}
 
 		[Test]
-		public async Task GetLoginTest()
+		public async Task UserNotExistsTest()
 		{
-			HttpResponseMessage response = await _client.GetAsync("/api/Login/auth");
+			var endPoint = "/api/Login/auth";
+            var data = new
+            {
+                email = "johndoe@example.com",
+				password = "test"
+            };
+
+			// Serializar el objeto a una cadena JSON
+			var json = JsonConvert.SerializeObject(data);
+
+            // Crear el HttpContent con la cadena JSON como contenido
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+			var httpResponse = await _client.PostAsync(endPoint,httpContent);
+			Assert.IsTrue(httpResponse.IsSuccessStatusCode);
+			
 		}
 	}
 }

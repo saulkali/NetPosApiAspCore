@@ -24,8 +24,8 @@ namespace PyPosApi.modules.moduleArticles.controller
 		[HttpPost("save-article")]
 		public async Task<ActionResult> SaveArticle([FromForm] ArticleEntity articleEntity)
 		{
-			ArticlesResponseEnum response = await _repository.Save(articleEntity);
-            return Ok(response);
+			ResponseEntity responseEntity = await _repository.Save(articleEntity);
+            return Ok(responseEntity);
 		}
 
 		/// <summary>
@@ -37,8 +37,8 @@ namespace PyPosApi.modules.moduleArticles.controller
 		[HttpGet("get-article-code-bar/{CodeBar}/{Amount}")]
 		public async Task<ActionResult> GetArticleByBarCode(string CodeBar,float Amount)
 		{
-			(ArticleEntity? article, ArticlesResponseEnum response) = await _repository.GetArticleByCodeBar(CodeBar,Amount);
-			return Ok();
+			ResponseEntity responseEntity = await _repository.GetArticleByCodeBar(CodeBar,Amount);
+			return Ok(responseEntity);
 		}
 	}
 }

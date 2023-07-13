@@ -7,9 +7,11 @@ namespace PyPosApi.common.database.functions
 	public class DClient
 	{
 		private readonly DatabaseContext _databaseContext;
-        public DClient(DatabaseContext databaseContext)
+		private readonly ILogger<DClient> _logger;
+        public DClient(DatabaseContext databaseContext,ILogger<DClient> logger)
 		{
 			_databaseContext = databaseContext;
+			_logger = logger;
 		}
 
 		public bool Create(ClientsScheme client)
@@ -37,8 +39,8 @@ namespace PyPosApi.common.database.functions
 			}
 			catch (Exception ex)
 			{
-
-			}
+                _logger.LogError(ex, "Ocurred error");
+            }
 
 			return isCreated;
 		}
@@ -57,8 +59,8 @@ namespace PyPosApi.common.database.functions
 			}
 			catch (Exception ex)
 			{
-
-			}
+                _logger.LogError(ex, "Ocurred error");
+            }
 
 			return isDeleted;
 		}

@@ -7,7 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using PyPosApi.modules.moduleArticles.model;
 using PyPosApi.common.database.functions;
-
+using Microsoft.AspNetCore.Hosting;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using NLog.Extensions.Logging;
 
 namespace PyPosApi
 {
@@ -33,18 +35,21 @@ namespace PyPosApi
                 });
             });
 
-            builder.WebHost.ConfigureKestrel(options =>
-            {
-                options.ListenAnyIP(5242); // HTTP
-                options.ListenAnyIP(7242, listenOptions =>
-                {
-                    listenOptions.UseHttps(); // HTTPS
-                });
-            });
+            //builder.WebHost.ConfigureKestrel(options =>
+            //{
+            //    options.ListenAnyIP(5242); // HTTP
+            //    //options.ListenAnyIP(7242, listenOptions =>
+            //    //{
+            //    //    listenOptions.UseHttps(); // HTTPS
+            //    //});
+            //});
 
             //database configuration
             builder.Services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("PyPosDatabase")));
+            {
+                var connectionString = builder.Configuration.GetConnectionString("PyPosDatabase");
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            });
 
             //add scopes
             builder.Services.AddScoped<LoginRepository>();
@@ -53,6 +58,11 @@ namespace PyPosApi
             builder.Services.AddScoped<DArticle>();
             builder.Services.AddScoped<DClient>();
             builder.Services.AddScoped<DUser>();
+            builder.Services.AddTransient<ILoggerFactory, LoggerFactory>();
+            builder.Services.AddLogging(log => { 
+                log.AddConsole();
+                log.AddNLog();
+            });
 
             //jwt configuration
             string secretKey = builder.Configuration.GetValue<string>("JwtSecret");
@@ -60,7 +70,6 @@ namespace PyPosApi
             builder.Services.AddScoped(provider => {
                 return new JwtSecurity(secretKey);
             });
-
 
             builder.Services.AddSingleton(new JwtSecurity(secretKey));
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

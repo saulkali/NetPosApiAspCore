@@ -7,13 +7,14 @@ namespace PyPosApi.common.database.functions
 	public class DArticle
 	{
 		private readonly DatabaseContext _databaseContext;
+		private readonly ILogger<DArticle> _logger;
+		public DArticle(DatabaseContext databaseContext, ILogger<DArticle> logger)
+        {
+            _databaseContext = databaseContext;
+            _logger = logger;
+        }
 
-		public DArticle(DatabaseContext databaseContext)
-		{
-			_databaseContext = databaseContext;
-		}
-
-		public async Task<bool> Delete(Guid idArticle)
+        public async Task<bool> Delete(Guid idArticle)
 		{
 			bool isDeleted = false;
 			try
@@ -26,7 +27,7 @@ namespace PyPosApi.common.database.functions
 			}
 			catch (Exception ex)
 			{
-
+				_logger.LogError(ex,"Ocurred error");
 			}
 
 			return isDeleted;
@@ -53,8 +54,9 @@ namespace PyPosApi.common.database.functions
 			}
 			catch (Exception ex)
 			{
+                _logger.LogError(ex, "Ocurred error");
+            }
 
-			}
 			return isCreated;
 		}
 	}

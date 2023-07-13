@@ -12,10 +12,16 @@ namespace PyPosApi.common.database.functions
 	{
 		private readonly DatabaseContext _databaseContext;
 		private readonly JwtSecurity _jwtSecurity;
-		public DUser(DatabaseContext databaseContext, JwtSecurity jwtSecurity)
+		private readonly ILogger<DUser> _logger;
+
+		public DUser(
+			DatabaseContext databaseContext, 
+			JwtSecurity jwtSecurity,
+			ILogger<DUser> logger)
 		{
 			_databaseContext = databaseContext;
 			_jwtSecurity = jwtSecurity;
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -36,7 +42,7 @@ namespace PyPosApi.common.database.functions
 			}
 			catch (Exception ex)
 			{
-				
+				_logger.LogError(ex, "Ocurred error");
 			}
 			return isDeleted;
 		}
@@ -69,7 +75,7 @@ namespace PyPosApi.common.database.functions
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "Ocurred error");
             }
             return response;
         }
@@ -81,8 +87,8 @@ namespace PyPosApi.common.database.functions
         /// <returns></returns>
         public async Task<bool> Create(UserScheme user)
 		{
-
 			bool isCreated = false;
+			
 			try
 			{
 				if (user == null)
@@ -105,8 +111,9 @@ namespace PyPosApi.common.database.functions
 			}
 			catch(Exception ex)
 			{
+                _logger.LogError(ex, "Ocurred error");
+            }
 
-			}
 			return isCreated;
 		}
 	}
